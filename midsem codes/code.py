@@ -12,7 +12,7 @@ class questionMDP:
 
         self.g = {}
         for i in range(1, N+1):
-            self.g[i] = math.log10(i)
+            self.g[i] = math.log(i)
 
         self.C = {}
         for i in range(1, N+1):
@@ -57,7 +57,7 @@ class questionMDP:
             df = pd.concat([df, pd.Series(v_n, name=f'v^{n}')], axis=1)
         df[f'v^{n+1}'] = v_n_1
         if save_csv:
-            df.to_csv('v_i.csv')
+            df.to_csv('vi.csv')
         if plot_norm:
             plt.figure(figsize=(16, 6))
             plt.plot([i+1 for i in range(len(norm_values))], norm_values)
@@ -108,7 +108,7 @@ class questionMDP:
             df = pd.concat([df, pd.Series(v_n, name=f'v^{n}')], axis=1)
         df[f'v^{n+1}'] = v_n_1
         if save_csv:
-            df.to_csv('gsv_i.csv')
+            df.to_csv('gsvi.csv')
         if plot_norm:
             plt.figure(figsize=(16, 6))
             plt.plot([i+1 for i in range(len(norm_values))], norm_values)
@@ -145,9 +145,9 @@ mdp = questionMDP(N=100, lmbd=0.9, R=10)
 
 print("value iteration:")
 v_final, d_final = mdp.value_iteration(epsilon=0.001, save_csv=True, plot_norm=False, verbos=True)
-print("saved v_i.csv")
+print("saved vi.csv") 
 
 print("\n\nGauss-Seidel value iteration:")
 v_final, d_final = mdp.gauss_seidel_iteration(epsilon=0.001, save_csv=True, plot_norm=False, verbos=True)
-print("saved gsv_i.csv")
+print("saved gsvi.csv")
 print(mdp.calculate_aarc(), end=" is the AARC value")

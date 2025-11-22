@@ -1,0 +1,293 @@
+\documentclass[8pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+
+\geometry{margin=0.3in,paperheight=11in,paperwidth=8.5in}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+
+\definecolor{theoremblue}{RGB}{0,102,204}
+\definecolor{algorithmgreen}{RGB}{0,153,76}
+\definecolor{formulared}{RGB}{204,0,51}
+\definecolor{proofpurple}{RGB}{153,51,153}
+
+\setlength{\columnsep}{0.25in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1pt}
+\setlength{\itemsep}{0pt}
+\setlength{\topsep}{2pt}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+\tiny
+\begin{multicols}{2}
+
+\section*{\textcolor{theoremblue}{MDP Fundamentals}}
+\textbf{MDP Tuple:} $(\mathcal{S}, \mathcal{A}, P, r, \lambda)$
+\begin{itemize}[leftmargin=*]
+    \item $\mathcal{S}$: finite state space
+    \item $\mathcal{A}$: finite action space  
+    \item $P(s'|s,a)$: transition probabilities
+    \item $r(s,a)$: reward function
+    \item $\lambda \in [0,1)$: discount factor
+\end{itemize}
+
+\textbf{Policies:} Markov $\pi_t: \mathcal{S} \to \mathcal{A}$; Stationary $\pi: \mathcal{S} \to \mathcal{A}$; History-dependent $\pi_t: H_t \to \mathcal{A}$
+
+\begin{theorem}[Adequacy of Markov Policies]
+For infinite horizon: $\exists$ stationary Markov policy that is optimal
+\end{theorem}
+
+\textbf{Value:} $V^\pi(s) = \mathbb{E}_\pi[\sum_{t=0}^\infty \lambda^t r(s_t, a_t) | s_0 = s]$
+
+\textbf{Q-Function:} $Q^\pi(s,a) = r(s,a) + \lambda \sum_{s'} P(s'|s,a) V^\pi(s')$
+
+\section*{\textcolor{theoremblue}{Finite Horizon}}
+\textbf{Bellman Equation:}
+$$V_t(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'} P(s'|s,a) V_{t+1}(s')\right]$$
+Boundary: $V_T(s) = 0$ (or terminal reward)
+
+\textbf{Optimal Policy:}
+$$d_t^*(s) = \arg\max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'} P(s'|s,a) V_{t+1}(s')\right]$$
+
+\section*{\textcolor{theoremblue}{Infinite Horizon - Discounted}}
+\textbf{Bellman Operator:} $T: V \mapsto TV$ where
+$$(TV)(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'} P(s'|s,a) V(s')\right]$$
+
+\begin{theorem}[Contraction]
+$T$ is a contraction with modulus $\lambda$:
+$$\|TV - TU\|_\infty \leq \lambda \|V - U\|_\infty$$
+\end{theorem}
+
+\begin{theorem}[Banach Fixed Point]
+Unique fixed point $V^*$ exists: $V^* = TV^*$
+\end{theorem}
+
+\textbf{Optimality Equation:}
+$$V^*(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'} P(s'|s,a) V^*(s')\right]$$
+
+\begin{theorem}[Optimal Policy Existence]
+$\exists$ stationary deterministic policy $\pi^*$ s.t.
+$$V^{\pi^*}(s) = V^*(s) \quad \forall s$$
+\end{theorem}
+
+\section*{\textcolor{algorithmgreen}{Value Iteration}}
+\textbf{Algorithm:}
+\begin{enumerate}[leftmargin=*]
+    \item Initialize $V_0(s) = 0$ $\forall s$
+    \item For $n = 0, 1, 2, \ldots$:
+    $$V_{n+1}(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'} P(s'|s,a) V_n(s')\right]$$
+    \item Stop when $\|V_{n+1} - V_n\|_\infty < \varepsilon$
+    \item Extract policy: $d(s) = \arg\max_a [r(s,a) + \lambda \sum_{s'} P(s'|s,a) V_{n+1}(s')]$
+\end{enumerate}
+
+\textbf{Convergence:} $\|V_n - V^*\|_\infty \leq \frac{\lambda^n}{1-\lambda} \|V_1 - V_0\|_\infty$
+
+\textbf{Stopping Criterion:} $\|V_{n+1} - V_n\|_\infty < \frac{\varepsilon(1-\lambda)}{2\lambda}$
+$\Rightarrow \|V_{n+1} - V^*\|_\infty < \varepsilon$
+
+\section*{\textcolor{algorithmgreen}{Gauss-Seidel Value Iteration}}
+\textbf{Algorithm:}
+\begin{enumerate}[leftmargin=*]
+    \item Initialize $V_0(s) = 0$ $\forall s$
+    \item For $n = 0, 1, 2, \ldots$:
+    \item For each $s \in \mathcal{S}$ (in order):
+    $$V_{n+1}(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \lambda \sum_{s'<s} P(s'|s,a) V_{n+1}(s') + \lambda \sum_{s'\geq s} P(s'|s,a) V_n(s')\right]$$
+\end{enumerate}
+
+\textbf{Advantage:} Uses updated values immediately (faster convergence)
+
+\section*{\textcolor{algorithmgreen}{Policy Iteration}}
+\textbf{Algorithm:}
+\begin{enumerate}[leftmargin=*]
+    \item Initialize policy $d_0$
+    \item \textbf{Policy Evaluation:} Solve $(I-\lambda P^{d_k})V = r^{d_k}$
+    \item \textbf{Policy Improvement:} $d_{k+1}(s) = \arg\max_a [r(s,a) + \lambda \sum_{s'} P(s'|s,a) V^{d_k}(s')]$
+    \item If $d_{k+1} = d_k$, stop; else go to step 2
+\end{enumerate}
+
+\textbf{Splitting Method:} $(I-\lambda P^d) = (I-\lambda Q_d) - \lambda R_d$
+Solve: $V = (I-\lambda Q_d)^{-1}(r^d + \lambda R_d V)$ iteratively
+
+\begin{theorem}[Policy Improvement]
+$V^{d_{k+1}} \geq V^{d_k}$ $\forall s$, strict if $d_k$ not optimal
+\end{theorem}
+
+\section*{\textcolor{theoremblue}{Average Reward MDP}}
+\textbf{Average Reward:}
+$$g^\pi = \lim_{T \to \infty} \frac{1}{T} \mathbb{E}_\pi\left[\sum_{t=0}^{T-1} r(s_t, a_t)\right]$$
+
+\textbf{Assumptions:} Unichain + irreducible under all policies
+
+\textbf{Bias Function:}
+$$h^\pi(s) = \lim_{N \to \infty} \mathbb{E}_\pi\left[\sum_{t=0}^{N-1} (r(s_t, a_t) - g^\pi) | s_0 = s\right]$$
+
+\begin{theorem}[Unichain Optimality Equations]
+$\exists$ scalar $g^*$ and function $h^*$ s.t.
+$$g^* + h^*(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \sum_{s'} P(s'|s,a) h^*(s')\right]$$
+Optimal policy: $d^*(s) = \arg\max_a [r(s,a) + \sum_{s'} P(s'|s,a) h^*(s')]$
+\end{theorem}
+
+\textbf{Bellman Error:}
+$$B(g,h)(s) = \max_{a \in \mathcal{A}} \left[r(s,a) - g + \sum_{s'} P(s'|s,a) h(s') - h(s)\right]$$
+Policy optimal iff $B(g,h)(s) = 0$ $\forall s$
+
+\section*{\textcolor{algorithmgreen}{Relative Value Iteration}}
+\textbf{Algorithm:}
+\begin{enumerate}[leftmargin=*]
+    \item Fix reference state $s_0$, initialize $V_0(s) = 0$
+    \item For $n = 0, 1, 2, \ldots$:
+    $$V_{n+1}(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \sum_{s'} P(s'|s,a) V_n(s')\right] - V_n(s_0)$$
+    \item $g^* = \lim_{n \to \infty} V_n(s_0)$
+    \item $h^*(s) = \lim_{n \to \infty} (V_n(s) - V_n(s_0))$
+\end{enumerate}
+
+\section*{\textcolor{theoremblue}{Policy Evaluation}}
+\textbf{Discounted:} $V^\pi = (I - \lambda P^\pi)^{-1} r^\pi$
+
+\textbf{Average Reward:}
+\begin{itemize}[leftmargin=*]
+    \item Stationary dist: $\pi^\pi$ solves $\pi^\pi P^\pi = \pi^\pi$, $\sum_s \pi^\pi(s) = 1$
+    \item Gain: $g^\pi = \sum_s \pi^\pi(s) r(s, \pi(s))$
+    \item Fundamental matrix: $Z = (I - P^\pi + P^*)^{-1}$ where $P^* = \mathbf{1} \pi^\pi$
+    \item Bias: $h^\pi = Z(r^\pi - g^\pi \mathbf{1})$
+\end{itemize}
+
+\section*{\textcolor{proofpurple}{Key Proof Ideas}}
+\textbf{Contraction Proof:}
+$$|(TV)(s) - (TU)(s)| \leq \lambda \max_{s'} |V(s') - U(s')| = \lambda \|V - U\|_\infty$$
+
+\textbf{Policy Improvement:}
+$$V^{d_{k+1}} \geq T^{d_{k+1}} V^{d_k} = TV^{d_k} \geq V^{d_k}$$
+
+\textbf{Optimality:} $V^* = TV^*$ $\Rightarrow$ $V^* \geq V^\pi$ for all $\pi$
+
+\section*{\textcolor{formulared}{Important Formulas}}
+\textbf{Discounted Value:}
+$$V^\pi(s) = \sum_{t=0}^\infty \lambda^t \mathbb{E}_\pi[r(s_t, a_t) | s_0 = s]$$
+
+\textbf{Action Value:}
+$$Q^*(s,a) = r(s,a) + \lambda \sum_{s'} P(s'|s,a) V^*(s')$$
+
+\textbf{Policy Gradient (if needed):}
+$$\nabla_\theta V^\pi(s) = \sum_{s'} \sum_{t=0}^\infty \lambda^t P^\pi(s_t = s'|s) \sum_a \nabla_\theta \pi(a|s') Q^\pi(s',a)$$
+
+\textbf{Convergence Rate:}
+$$\|V_n - V^*\|_\infty \leq \frac{\lambda^n}{1-\lambda} \|V_1 - V_0\|_\infty$$
+
+\section*{\textcolor{theoremblue}{Structural Results}}
+\begin{theorem}[Monotonicity]
+If $r_1(s,a) \leq r_2(s,a)$ $\forall (s,a)$, then $V_1^*(s) \leq V_2^*(s)$
+\end{theorem}
+
+\begin{theorem}[Convergence as $\lambda \to 1$]
+For unichain MDP: $\lim_{\lambda \to 1^-} (1-\lambda) V_\lambda^*(s) = g^*$
+\end{theorem}
+
+\section*{\textcolor{algorithmgreen}{Modified Policy Iteration}}
+\textbf{Algorithm:}
+\begin{enumerate}[leftmargin=*]
+    \item Initialize $V_0$, policy $d_0$
+    \item Policy evaluation: $V_{k+1} = T^{d_k} V_k$ (one step)
+    \item Policy improvement: $d_{k+1} = \arg\max_a T^a V_{k+1}$
+    \item Repeat until convergence
+\end{enumerate}
+
+\section*{\textcolor{formulared}{Computational Complexity}}
+\begin{itemize}[leftmargin=*]
+    \item Value Iteration: $O(|\mathcal{S}|^2 |\mathcal{A}|)$ per iteration
+    \item Policy Iteration: $O(|\mathcal{S}|^3)$ per evaluation
+    \item Gauss-Seidel: Same complexity, faster convergence
+    \item Relative VI: $O(|\mathcal{S}|^2 |\mathcal{A}|)$ per iteration
+\end{itemize}
+
+\section*{\textcolor{theoremblue}{Multichain MDPs}}
+\textbf{Classification:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Unichain:} Every policy induces single recurrent class
+    \item \textbf{Multichain:} Some policies have multiple recurrent classes
+\end{itemize}
+
+\begin{theorem}[Multichain Optimality Equations]
+$\exists$ gain vector $g^*$ and bias $h^*$ s.t.:
+$$g^*(s) + h^*(s) = \max_{a \in \mathcal{A}} \left[r(s,a) + \sum_{s'} P(s'|s,a) h^*(s')\right]$$
+$$g^*(s) = \max_{a \in \mathcal{A}_s^*} \left[\sum_{s'} P(s'|s,a) g^*(s')\right]$$
+where $\mathcal{A}_s^* = \{a: g^*(s) + h^*(s) = r(s,a) + \sum_{s'} P(s'|s,a) h^*(s')\}$
+\end{theorem}
+
+\textbf{Multichain Policy Eval:} Solve $(I-P^\pi)h^\pi = r^\pi - g^\pi$, $(I-P^\pi)g^\pi = 0$
+
+\section*{\textcolor{proofpurple}{Error Bounds}}
+\textbf{Value Iteration:}
+$$\|V_n - V^*\|_\infty \leq \frac{\lambda^n}{1-\lambda} \|V_1 - V_0\|_\infty$$
+
+\textbf{Policy Iteration:}
+$$V^{d_{k+1}} - V^{d_k} \geq (I - \lambda P^{d_k})^{-1} (T^{d_{k+1}} - T^{d_k}) V^{d_k}$$
+
+\section*{\textcolor{formulared}{Special Cases}}
+\textbf{Separable MDP:} $r(s,a) = r_S(s) + r_A(a)$, $P(s'|s,a) = P_A(s'|a)$
+$\Rightarrow$ $d^*(s) = \arg\max_a [r_A(a) + \sum_{s'} P_A(s'|a) h^*(s')]$ (constant policy)
+
+\section*{\textcolor{formulared}{Linear Programming}}
+\textbf{Primal LP:} $\min \sum_s V(s)$ s.t. $V(s) \geq r(s,a) + \lambda \sum_{s'} P(s'|s,a) V(s')$ $\forall s,a$
+
+\textbf{Dual LP:} $\max \sum_{s,a} r(s,a) x(s,a)$ s.t. $\sum_a x(s',a) = \delta_{s_0}(s') + \lambda \sum_{s,a} P(s'|s,a) x(s,a)$, $x(s,a) \geq 0$
+
+\textbf{Optimal:} $V^*$ from primal = optimal value function
+
+\section*{\textcolor{theoremblue}{Convergence Theorems}}
+\begin{theorem}[Value Iteration Convergence]
+$\lim_{n \to \infty} V_n = V^*$ and $\lim_{n \to \infty} d_n = d^*$
+\end{theorem}
+
+\begin{theorem}[Policy Iteration Convergence]
+Policy iteration converges in finite steps to optimal policy
+\end{theorem}
+
+\begin{theorem}[Gauss-Seidel Convergence]
+Gauss-Seidel VI converges to $V^*$ (faster than standard VI)
+\end{theorem}
+
+\section*{\textcolor{algorithmgreen}{Q-Learning}}
+$Q(s,a) \leftarrow Q(s,a) + \alpha [r + \lambda \max_{a'} Q(s',a') - Q(s,a)]$
+Convergence: $\sum_t \alpha_t = \infty$, $\sum_t \alpha_t^2 < \infty$
+
+\section*{\textcolor{formulared}{Norms}}
+$\|V\|_\infty = \max_s |V(s)|$, $\|V\|_w = \max_s \frac{|V(s)|}{w(s)}$, $\text{sp}(V) = \max_s V(s) - \min_s V(s)$
+
+\section*{\textcolor{theoremblue}{Existence \& Uniqueness}}
+\begin{theorem}[Optimal Policy Exists]
+Finite MDP $\Rightarrow$ $\exists$ deterministic stationary optimal policy
+\end{theorem}
+\begin{theorem}[Unique Value]
+$V^*$ is unique fixed point of $T$
+\end{theorem}
+\begin{theorem}[Unique Gain]
+Unichain MDP $\Rightarrow$ $g^*$ unique
+\end{theorem}
+
+\section*{\textcolor{proofpurple}{Key Inequalities}}
+Bellman: $V^\pi(s) \leq r(s,\pi(s)) + \lambda \sum_{s'} P(s'|s,\pi(s)) V^\pi(s')$
+Optimality: $V^*(s) = \max_a [r(s,a) + \lambda \sum_{s'} P(s'|s,a) V^*(s')]$
+
+\section*{\textcolor{algorithmgreen}{Tips}}
+Sparse matrices; Vectorize: $V_{n+1} = \max_a [r + \lambda P V_n]$; Early stop; Normalize by ref state
+
+\section*{\textcolor{formulared}{Stationary Dist}}
+$\pi^\pi P^\pi = \pi^\pi$, $\sum_s \pi^\pi(s) = 1$. Solve: $(P^\pi)^T - I$ with $\sum_s \pi^\pi(s) = 1$
+
+\section*{\textcolor{theoremblue}{Performance Bounds}}
+Suboptimal: $\|V^\pi - V^*\|_\infty \leq \frac{1}{1-\lambda} \max_s |(T^\pi V^*)(s) - V^*(s)|$
+Approx: If $\|V - V^*\|_\infty < \varepsilon$, then $\|V^\pi - V^*\|_\infty < \frac{2\lambda \varepsilon}{1-\lambda}$
+
+\end{multicols}
+\end{document}
+

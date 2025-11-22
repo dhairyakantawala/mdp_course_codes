@@ -1,0 +1,21 @@
+PWD /Users/dhairya/cs projects/mdp_course_codes/quiz 2 codes/paper
+INPUT /usr/local/texlive/2023/texmf.cnf
+INPUT /usr/local/texlive/2023/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT /Users/dhairya/cs projects/mdp_course_codes/quiz 2 codes/paper/text.tex
+OUTPUT text.log
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/size10.clo
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/size10.clo
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/size10.clo
+INPUT /usr/local/texlive/2023/texmf-dist/tex/latex/base/size10.clo

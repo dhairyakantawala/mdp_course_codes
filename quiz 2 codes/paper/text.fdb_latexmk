@@ -1,0 +1,16 @@
+# Fdb version 4
+["pdflatex"] 1761571701 "/Users/dhairya/cs projects/mdp_course_codes/quiz 2 codes/paper/text.tex" "text.pdf" "text" 1761571701 2
+  "/Users/dhairya/cs projects/mdp_course_codes/quiz 2 codes/paper/text.tex" 1761571699 18115 a3f5bf28bface94f94999f47a278731b ""
+  "/usr/local/texlive/2023/texmf-dist/tex/latex/base/article.cls" 1667332637 20144 d5ecf0a5140c8d8d8b72cbe86e320eff ""
+  "/usr/local/texlive/2023/texmf-dist/tex/latex/base/size10.clo" 1667332637 8448 c33a4e1cb35cee9b33c2b21033b73e39 ""
+  "/usr/local/texlive/2023/texmf-dist/web2c/texmf.cnf" 1677365944 40745 87bb86a62d462f93a1efc6b0c65c872e ""
+  "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1708764414 7883462 cbb29c2096d12a24976ccee81c59179a ""
+  "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
+  "arxiv.sty" 0 -1 0 ""
+  "text.aux" 1761571701 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "text.tex" 1761571699 18115 a3f5bf28bface94f94999f47a278731b ""
+  (generated)
+  "text.aux"
+  "text.log"
+  "text.pdf"
+  (rewritten before read)
